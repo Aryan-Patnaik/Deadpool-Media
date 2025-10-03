@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeadpoolSocial - Sign In</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Bangers', cursive, sans-serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #1a0000 0%, #4a0000 50%, #1a0000 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signin-container {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(50, 0, 0, 0.9) 100%);
+            border: 5px solid #ff0000;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(255, 0, 0, 0.5), 0 0 50px rgba(255, 0, 0, 0.3);
+            animation: slideIn 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) rotate(-5deg);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotate(0);
+            }
+        }
+
+        .signin-container::before {
+            content: '💀';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            font-size: 150px;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #ff0000;
+            text-align: center;
+            margin-bottom: 15px;
+            text-shadow: 
+                3px 3px 0 #000,
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                0 0 20px #ff0000;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #ffcc00;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: #ffcc00;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 0 #000;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 3px solid #ff0000;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            font-family: 'Comic Sans MS', cursive;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #ffcc00;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+            transform: scale(1.02);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .signin-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+            color: #fff;
+            border: 4px solid #000;
+            padding: 18px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 2px 2px 0 #000;
+            box-shadow: 0 6px 0 #660000, 0 10px 25px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .signin-btn::before {
+            content: '🗡️';
+            position: absolute;
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            transition: left 0.3s ease;
+        }
+
+        .signin-btn:hover::before {
+            left: 20px;
+        }
+
+        .signin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 0 #660000, 0 15px 35px rgba(0, 0, 0, 0.7);
+        }
+
+        .signin-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 3px 0 #660000, 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .error-message {
+            background: rgba(255, 0, 0, 0.2);
+            border: 3px solid #ff0000;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            color: #fff;
+            font-size: 1.1rem;
+            display: none;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .deadpool-quote {
+            text-align: center;
+            margin-top: 25px;
+            color: #ffcc00;
+            font-style: italic;
+            font-size: 0.95rem;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            border: 2px dashed #ff0000;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 0, 0, 0.8);
+            color: #fff;
+            border: 3px solid #000;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .back-btn:hover {
+            background: #ff0000;
+            transform: scale(1.1);
+        }
+
+        .weapon-icon {
+            position: absolute;
+            font-size: 2rem;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .weapon-1 {
+            top: 10%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .weapon-2 {
+            bottom: 15%;
+            left: 5%;
+            animation-delay: 1s;
+        }
+
+        @media (max-width: 768px) {
+            .signin-container {
+                padding: 40px 25px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .weapon-icon {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="three-container"></div>
+    
+    <a href="index.html" class="back-btn">⬅️ Back</a>
+    
+    <div class="weapon-icon weapon-1">🔫</div>
+    <div class="weapon-icon weapon-2">⚔️</div>
+    
+    <div class="content">
+        <div class="signin-container">
+            <h1 class="title">🎭 SIGN IN 🎭</h1>
+            <p class="subtitle">"You can't spell 'slaughter' without 'laughter'!"</p>
+            
+            <form id="signinForm">
+                <div class="form-group">
+                    <label class="form-label">🎯 Username:</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        class="form-input" 
+                        placeholder="Enter your mercenary ID..."
+                        required
+                    >
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">🔒 Password:</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="Top secret... like my chimichanga recipe"
+                        required
+                    >
+                </div>
+                
+                <button type="submit" class="signin-btn">
+                    MAXIMUM EFFORT LOGIN! 💥
+                </button>
+            </form>
+            
+            <div id="errorMessage" class="error-message">
+                ❌ Wrong credentials, bub! Try again or I'll break the fourth wall... again! 💀
+            </div>
+            
+            <div class="deadpool-quote">
+                "With great power comes great irresponsibility... wait, that's not right."
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function _0x3253(_0x53007d,_0x20b66d){const _0x620d17=_0x620d();return _0x3253=function(_0x325341,_0x21e578){_0x325341=_0x325341-0x190;let _0x194aac=_0x620d17[_0x325341];return _0x194aac;},_0x3253(_0x53007d,_0x20b66d);}function _0x620d(){const _0xabb4d8=['kamaalka_ctf','1730Ohvpur','floor','render','30870CsWzAG','remove','2062gPvkiq','.signin-btn','✅\x20SUCCESS!\x20Redirecting...','3029712MkSXNz','1210174oHShHd','rotation','appendChild','animation','.signin-container','innerWidth','forEach','SphereGeometry','Scene','position','WebGLRenderer','querySelector','Mesh','otp.html?user=','addEventListener','location','resize','show','BoxGeometry','302hBAQBi','three-container','length','textContent','preventDefault','getElementById','errorMessage','add','MeshBasicMaterial','aspect','password','1377792PPUXMM','linear-gradient(135deg,\x20#00ff00\x200%,\x20#00cc00\x20100%)','1004856qFefUe','background','innerHeight','username','PerspectiveCamera','CylinderGeometry','set','setSize','shake\x200.5s\x20ease','1247015sWdBbB','href','focus','updateProjectionMatrix','now','push','domElement','random','value','classList','3kQVXYg'];_0x620d=function(){return _0xabb4d8;};return _0x620d();}const _0x41bb60=_0x3253;(function(_0x1c0ad3,_0x40d7e6){const _0x26633a=_0x3253,_0x46f102=_0x1c0ad3();while(!![]){try{const _0x5dbffa=-parseInt(_0x26633a(0x1b8))/0x1*(parseInt(_0x26633a(0x1a1))/0x2)+-parseInt(_0x26633a(0x19a))/0x3*(-parseInt(_0x26633a(0x1c5))/0x4)+parseInt(_0x26633a(0x190))/0x5+-parseInt(_0x26633a(0x1a4))/0x6+-parseInt(_0x26633a(0x1a5))/0x7+parseInt(_0x26633a(0x1c3))/0x8+parseInt(_0x26633a(0x19f))/0x9*(parseInt(_0x26633a(0x19c))/0xa);if(_0x5dbffa===_0x40d7e6)break;else _0x46f102['push'](_0x46f102['shift']());}catch(_0x2472fb){_0x46f102['push'](_0x46f102['shift']());}}}(_0x620d,0x43a2b));const container=document[_0x41bb60(0x1bd)](_0x41bb60(0x1b9)),scene=new THREE[(_0x41bb60(0x1ad))](),camera=new THREE[(_0x41bb60(0x1c9))](0x4b,window[_0x41bb60(0x1aa)]/window[_0x41bb60(0x1c7)],0.1,0x3e8),renderer=new THREE[(_0x41bb60(0x1af))]({'alpha':!![],'antialias':!![]});renderer[_0x41bb60(0x1cc)](window[_0x41bb60(0x1aa)],window['innerHeight']),container[_0x41bb60(0x1a7)](renderer[_0x41bb60(0x196)]);const weapons=[],geometries=[new THREE[(_0x41bb60(0x1ca))](0.02,0.02,0x1,0x8),new THREE[(_0x41bb60(0x1b7))](0.8,0.1,0.1),new THREE[(_0x41bb60(0x1ac))](0.1,0x10,0x10)];for(let i=0x0;i<0x8;i++){const geometry=geometries[Math[_0x41bb60(0x19d)](Math[_0x41bb60(0x197)]()*geometries[_0x41bb60(0x1ba)])],material=new THREE[(_0x41bb60(0x1c0))]({'color':Math[_0x41bb60(0x197)]()>0.5?0xff0000:0xffcc00,'transparent':!![],'opacity':0.4}),weapon=new THREE[(_0x41bb60(0x1b1))](geometry,material);weapon[_0x41bb60(0x1ae)]['set']((Math[_0x41bb60(0x197)]()-0.5)*0xa,(Math[_0x41bb60(0x197)]()-0.5)*0xa,(Math[_0x41bb60(0x197)]()-0.5)*0x5),weapon['rotation'][_0x41bb60(0x1cb)](Math[_0x41bb60(0x197)]()*Math['PI'],Math['random']()*Math['PI'],Math[_0x41bb60(0x197)]()*Math['PI']),weapons[_0x41bb60(0x195)](weapon),scene['add'](weapon);}camera[_0x41bb60(0x1ae)]['z']=0x5;function animate(){const _0x100bb1=_0x41bb60;requestAnimationFrame(animate),weapons[_0x100bb1(0x1ab)]((_0xae2a33,_0x5a6e76)=>{const _0x133035=_0x100bb1;_0xae2a33[_0x133035(0x1a6)]['x']+=0.01*(_0x5a6e76%0x2===0x0?0x1:-0x1),_0xae2a33[_0x133035(0x1a6)]['y']+=0.01,_0xae2a33[_0x133035(0x1ae)]['y']+=Math['sin'](Date[_0x133035(0x194)]()*0.001+_0x5a6e76)*0.002;}),renderer[_0x100bb1(0x19e)](scene,camera);}animate(),window[_0x41bb60(0x1b3)](_0x41bb60(0x1b5),()=>{const _0x248a41=_0x41bb60;camera[_0x248a41(0x1c1)]=window['innerWidth']/window[_0x248a41(0x1c7)],camera[_0x248a41(0x193)](),renderer[_0x248a41(0x1cc)](window[_0x248a41(0x1aa)],window['innerHeight']);});const signinForm=document['getElementById']('signinForm'),errorMessage=document[_0x41bb60(0x1bd)](_0x41bb60(0x1be)),usernameInput=document[_0x41bb60(0x1bd)](_0x41bb60(0x1c8)),passwordInput=document[_0x41bb60(0x1bd)](_0x41bb60(0x1c2)),Of2sIdWE0=_0x41bb60(0x19b),UfO3OR9rr45='mai_nahi_bataunga';signinForm[_0x41bb60(0x1b3)]('submit',_0x389f27=>{const _0x146c3c=_0x41bb60;_0x389f27[_0x146c3c(0x1bc)]();const _0x55f5a2=usernameInput[_0x146c3c(0x198)],_0x57effe=passwordInput[_0x146c3c(0x198)];if(_0x55f5a2===Of2sIdWE0&&_0x57effe===UfO3OR9rr45){errorMessage['classList']['remove'](_0x146c3c(0x1b6));const _0x5a8842={'username':_0x55f5a2},_0x106f26=signinForm['querySelector'](_0x146c3c(0x1a2));_0x106f26[_0x146c3c(0x1bb)]=_0x146c3c(0x1a3),_0x106f26['style'][_0x146c3c(0x1c6)]=_0x146c3c(0x1c4),setTimeout(()=>{const _0x37865c=_0x146c3c;window[_0x37865c(0x1b4)][_0x37865c(0x191)]=_0x37865c(0x1b2)+encodeURIComponent(_0x55f5a2);},0x5dc);}else{errorMessage[_0x146c3c(0x199)][_0x146c3c(0x1bf)](_0x146c3c(0x1b6));const _0x28841d=document[_0x146c3c(0x1b0)](_0x146c3c(0x1a9));_0x28841d['style'][_0x146c3c(0x1a8)]='none',setTimeout(()=>{const _0x14242e=_0x146c3c;_0x28841d['style'][_0x14242e(0x1a8)]=_0x14242e(0x1cd);},0xa),passwordInput[_0x146c3c(0x198)]='',usernameInput[_0x146c3c(0x192)]();}}),usernameInput[_0x41bb60(0x1b3)]('input',()=>{const _0x40d1d2=_0x41bb60;errorMessage[_0x40d1d2(0x199)][_0x40d1d2(0x1a0)](_0x40d1d2(0x1b6));}),passwordInput[_0x41bb60(0x1b3)]('input',()=>{const _0xc1edb6=_0x41bb60;errorMessage[_0xc1edb6(0x199)][_0xc1edb6(0x1a0)]('show');});
+    </script>
+</body>
+</html>
